@@ -1,6 +1,6 @@
-# 🏠 Airbnb Host Advisor - Streamlit Application
+# 🏠 Airbnb Host Advisor - Copenhagen Example
 
-A comprehensive web application that provides data-driven insights for Airbnb hosts to optimize their listings, pricing, and guest experience.
+A comprehensive web application that provides data-driven insights for Airbnb hosts to optimize their listings, pricing, and guest experience. This example uses Copenhagen Airbnb data to demonstrate the application's capabilities.
 
 ## 🎯 Key Features
 
@@ -36,6 +36,8 @@ A comprehensive web application that provides data-driven insights for Airbnb ho
 
 ## 🚀 Quick Start
 
+This example application uses Copenhagen Airbnb data to demonstrate comprehensive data analysis capabilities for Airbnb hosts.
+
 ### Option 1: Automated Launch
 ```bash
 python run_host_advisor.py
@@ -57,11 +59,18 @@ streamlit run airbnb_host_advisor.py --server.port 8501
 
 ## 📊 Data Requirements
 
-The application works with your existing Airbnb data files:
+This example uses Copenhagen Airbnb data to demonstrate the application's capabilities. The application works with your existing Airbnb data files:
 
 - **`listings.csv`** or **`listings.csv.gz`** - Property listings with details
 - **`reviews.csv`** or **`reviews.csv.gz`** - Guest reviews and ratings
 - **`calendar.csv.gz`** - Availability and pricing data
+
+### 📍 Copenhagen Data Context
+The application analyzes Copenhagen's unique market characteristics:
+- **Neighbourhood diversity** from Nørrebro to Christianshavn
+- **Seasonal tourism patterns** reflecting Copenhagen's climate
+- **Local amenity preferences** and cultural factors
+- **Price variations** across different districts
 
 ## 🎨 Application Sections
 
@@ -184,20 +193,20 @@ The application provides:
 
 ## 🎯 Use Cases
 
-### For New Hosts:
-- **Market research** and pricing strategy
-- **Amenity selection** and investment decisions
-- **Competitive positioning** and differentiation
+### For New Hosts in Copenhagen:
+- **Market research** and pricing strategy for Copenhagen's unique market
+- **Amenity selection** considering local preferences and cultural factors
+- **Competitive positioning** in Copenhagen's diverse neighbourhoods
 
 ### For Experienced Hosts:
-- **Performance optimization** and improvement
-- **Seasonal strategy** and dynamic pricing
-- **Guest experience** enhancement
+- **Performance optimization** using Copenhagen-specific insights
+- **Seasonal strategy** adapted to Copenhagen's tourism patterns
+- **Guest experience** enhancement for Copenhagen visitors
 
 ### For Property Managers:
-- **Portfolio analysis** and optimization
-- **Market trend** identification
-- **Investment decisions** and ROI analysis
+- **Portfolio analysis** across Copenhagen's different districts
+- **Market trend** identification in the Danish capital
+- **Investment decisions** based on Copenhagen market dynamics
 
 ## 🚀 Next Steps
 
@@ -217,4 +226,6 @@ For issues or questions:
 
 ---
 
-**Happy hosting! 🏠✨** 
+**Happy hosting in Copenhagen! 🏠✨**
+
+*This example demonstrates how data analysis can provide valuable insights for Airbnb hosts in any market, using Copenhagen as a case study.* 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Launcher script for Airbnb Host Advisor Streamlit app
+Launcher script for Airbnb Host Advisor - Copenhagen Example
 """
 
 import subprocess
@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 
 def main():
-    print("🏠 Starting Airbnb Host Advisor...")
+    print("🏠 Starting Airbnb Host Advisor - Copenhagen Example...")
     
     # Check if streamlit is installed
     try:
