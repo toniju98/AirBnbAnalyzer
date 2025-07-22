@@ -28,12 +28,10 @@ def main():
     else:
         print("⚠️ No data files found. The app will show sample data.")
     
-    # Launch Streamlit app
+    # Launch Streamlit app (let Streamlit Cloud handle port assignment)
     print("🚀 Launching Streamlit app...")
     subprocess.run([
-        sys.executable, "-m", "streamlit", "run", "airbnb_host_advisor.py",
-        "--server.port", "8501",
-        "--server.address", "localhost"
+        sys.executable, "-m", "streamlit", "run", "airbnb_host_advisor.py"
     ])
 
 if __name__ == "__main__":
