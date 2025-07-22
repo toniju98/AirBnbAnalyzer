@@ -857,7 +857,6 @@ def show_occupancy_analysis(listings_df, calendar_df):
             seasonal_occupancy = calendar_df.groupby('season')['available'].apply(
                 lambda x: ((x == 'f').sum() / len(x)) * 100
             ).round(2)
-            
             col1, col2 = st.columns(2)
             
             with col1:
