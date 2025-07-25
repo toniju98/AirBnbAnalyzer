@@ -1,43 +1,54 @@
-# 🏠 Airbnb Host Advisor
+# 🏠 Airbnb Host Dashboard
 
-> **AI-powered insights for Airbnb hosts to maximize occupancy, optimize pricing, and improve guest satisfaction**
+> **Analyze your Airbnb booking data and Copenhagen market insights with advanced analytics**
 
 ## 🎯 The Problem
 
-Airbnb hosts face significant challenges in today's competitive market:
+Airbnb hosts struggle to understand their own performance data and market positioning:
 
-- **Pricing Uncertainty**: Difficulty determining optimal pricing strategies that balance profitability with occupancy
-- **Market Blindness**: Lack of visibility into competitor pricing and market trends
-- **Occupancy Optimization**: Struggling to maximize booking rates while maintaining competitive pricing
-- **Seasonal Planning**: Inability to effectively plan for seasonal demand fluctuations
-- **Guest Experience**: Limited insights into what drives guest satisfaction and ratings
+- **Data Overload**: Raw CSV exports from Airbnb are difficult to analyze and interpret
+- **Missing Insights**: No clear view of occupancy patterns, revenue trends, or pricing performance
+- **Market Blindness**: No way to compare performance against local market data
+- **Manual Analysis**: Time-consuming spreadsheet work to understand booking patterns
+- **Limited Visualization**: No easy way to see trends and patterns in booking data
+- **Performance Blindness**: Difficulty identifying peak periods, pricing opportunities, and revenue optimization
 
-Traditional approaches rely on manual research and guesswork, leading to suboptimal performance and missed revenue opportunities.
+Hosts need a simple, visual way to understand their booking data, compare with market data, and make data-driven decisions.
 
 ## 💡 The Solution
 
-**Airbnb Host Advisor** is an intelligent analytics platform that transforms raw Airbnb market data into actionable insights for hosts:
+**Airbnb Host Dashboard** is a comprehensive analytics tool that transforms your Airbnb booking CSV exports into actionable insights and provides Copenhagen market intelligence:
 
 ### 🎯 Core Capabilities
 
-- **📊 Occupancy Analysis**: Deep dive into booking patterns, seasonal trends, and occupancy optimization strategies
-- **💰 Price Analysis**: Comprehensive market pricing analysis with distribution patterns and competitive positioning
-- **🏆 Market Comparison**: Competitive analysis across neighbourhoods and room types
-- **🎯 Price Recommendations**: Actionable pricing strategies based on market data and competitive positioning
-- **📈 Strategic Insights**: Data-driven recommendations for maximizing revenue and guest satisfaction
+#### **📊 Your Personal Data Analysis**
+- **📈 Occupancy Analysis**: Visualize your booking patterns, peak periods, and day-of-week trends
+- **💰 Revenue Tracking**: Track your total revenue, average revenue per booking, and monthly trends
+- **💵 Pricing Analysis**: Understand your price distribution, trends, and optimization opportunities
+- **📊 Performance Metrics**: Key metrics and insights to improve your hosting business
+
+#### **🏙️ Copenhagen Market Intelligence**
+- **🏙️ Market Insights**: Comprehensive Copenhagen market statistics and competitive analysis
+- **📝 Review Patterns**: Analyze when guests typically leave reviews (day-of-week patterns)
+- **📅 Calendar Analysis**: Interactive calendar views for individual listings and market-wide availability
+- **🏘️ Neighbourhood Analysis**: Compare performance across different Copenhagen neighbourhoods
+- **🏠 Room Type Analysis**: Understand pricing and demand by room type
 
 ### 🚀 Key Features
 
-- **Interactive Dashboards**: Real-time analytics with beautiful, responsive visualizations
-- **Market Intelligence**: Comprehensive analysis of Copenhagen Airbnb market data
-- **Actionable Recommendations**: Specific, implementable strategies for hosts
-- **Seasonal Planning**: Tools for optimizing pricing across different seasons
-- **Competitive Analysis**: Understanding your position in the market
+- **🧭 Smart Navigation**: Clean sidebar navigation separating personal data from market insights
+- **📁 Simple Upload**: Just upload your Airbnb CSV export and get instant insights
+- **🔍 Automatic Detection**: Automatically detects date and price columns from your data
+- **📊 Visual Analytics**: Beautiful interactive charts and graphs to understand performance
+- **📈 Review Analysis**: Understand guest review patterns and timing
+- **📅 Interactive Calendars**: Visualize availability and booking patterns
+- **🏙️ Market Comparison**: Compare your performance with Copenhagen market data
+- **🎯 Data-Driven Decisions**: Make informed decisions based on your actual booking data
 
 ## 🎮 Demo & Getting Started
 
 ### Live Demo
-Experience the Airbnb Host Advisor in action:
+Experience the Airbnb Host Dashboard in action:
 
 🌐 **Live Demo**: [https://airbnbanalyzer-mrb2fmhxynr6mqynwvrdvu.streamlit.app/](https://airbnbanalyzer-mrb2fmhxynr6mqynwvrdvu.streamlit.app/)
 
@@ -67,21 +78,27 @@ streamlit run airbnb_host_advisor.py
 
 4. **Access the dashboard:**
    - Open your browser to `http://localhost:8501`
-   - Explore the interactive analytics dashboard
+   - Explore the interactive analytics dashboard with sidebar navigation
 
-### 📊 Demo Features
+### 📊 Dashboard Sections
 
-- **Main Dashboard**: Overview of market metrics and quick insights
-- **Occupancy Analysis**: Booking patterns and seasonal trends
-- **Price Analysis**: Market pricing distribution and positioning
-- **Market Comparison**: Competitive analysis across neighbourhoods
-- **Price Recommendations**: Actionable pricing strategies
+#### **Your Personal Data Analysis**
+- **📊 Your Data Overview**: Main overview and data preview of your uploaded bookings
+- **📈 Your Occupancy Analysis**: Detailed booking patterns and occupancy trends
+- **💰 Your Revenue Analysis**: Revenue tracking and monthly trends
+- **💵 Your Pricing Analysis**: Pricing patterns and optimization insights
+
+#### **Copenhagen Market Intelligence**
+- **🏙️ Copenhagen Market Insights**: Market statistics, neighbourhood analysis, and room type insights
+- **📝 Copenhagen Review Patterns**: Day-of-week review patterns with interactive charts
+- **📅 Copenhagen Calendar Analysis**: Interactive calendar views for individual listings and market-wide availability
 
 ## 🛠️ Technical Stack
 
 - **Frontend**: Streamlit for interactive web application
 - **Data Processing**: Pandas, NumPy for data manipulation
-- **Visualization**: Plotly, Matplotlib for interactive charts
+- **Visualization**: Plotly for interactive charts and graphs
+- **Calendar Integration**: Streamlit-calendar for interactive calendar views
 - **Geographic Analysis**: Folium for interactive maps
 - **Machine Learning**: Scikit-learn for predictive analytics
 
@@ -92,6 +109,15 @@ AirBnbAnalyzer/
 ├── airbnb_host_advisor.py      # Main Streamlit application
 ├── requirements.txt             # Python dependencies
 ├── README.md                   # This file
+├── analytics/
+│   ├── __init__.py
+│   └── analysis.py             # Analytics functions
+├── components/
+│   ├── __init__.py
+│   └── ui.py                   # UI components and styling
+├── utils/
+│   ├── __init__.py
+│   └── data_loader.py          # Data loading utilities
 ├── data/                       # Data directory
 ├── listings.csv.gz             # Property listings
 ├── reviews.csv.gz              # Guest reviews
@@ -102,20 +128,24 @@ AirBnbAnalyzer/
 
 ## 🎯 Use Cases
 
-### For New Hosts
-- Understand market pricing and competitive landscape
-- Set optimal initial pricing strategies
-- Identify high-demand neighbourhoods and room types
-
-### For Experienced Hosts
-- Optimize existing pricing strategies
-- Analyze occupancy patterns and seasonal trends
-- Improve guest satisfaction and ratings
+### For Individual Hosts
+- Analyze your own booking performance and trends
+- Understand peak booking periods and pricing opportunities
+- Track revenue and occupancy patterns over time
+- Compare your performance with Copenhagen market data
+- Understand guest review patterns and timing
 
 ### For Property Managers
-- Scale pricing strategies across multiple properties
-- Market analysis for expansion opportunities
-- Performance benchmarking and optimization
+- Monitor multiple properties' performance
+- Identify revenue optimization opportunities
+- Track pricing effectiveness across different properties
+- Market analysis for competitive positioning
+
+### For New Hosts
+- Understand your initial performance data
+- Identify patterns in your early bookings
+- Optimize pricing based on your actual data
+- Learn from Copenhagen market insights
 
 ## 🚀 Roadmap
 
@@ -124,6 +154,8 @@ AirBnbAnalyzer/
 - [ ] **Multi-city Support**: Expand beyond Copenhagen
 - [ ] **Advanced Analytics**: Deep learning for pattern recognition
 - [ ] **API Integration**: Connect with Airbnb API for real-time data
+- [ ] **Export Features**: PDF/Excel report generation
+- [ ] **Mobile Optimization**: Better mobile experience
 
 ## 🤝 Contributing
 
@@ -133,13 +165,14 @@ We welcome contributions! Areas of interest:
 - **UI/UX Improvements**: Enhanced user experience
 - **Data Integration**: Support for additional data sources
 - **Performance Optimization**: Faster data processing and analysis
+- **Market Expansion**: Support for additional cities and markets
 
 ## 📝 License
 
-This project is for educational and analysis purposes. The Airbnb Host Advisor demonstrates advanced data analytics capabilities for the hospitality industry.
+This project is for educational and analysis purposes. The Airbnb Host Dashboard demonstrates advanced data analytics capabilities for the hospitality industry.
 
 ---
 
-**Ready to optimize your Airbnb performance?** 🚀
+**Ready to optimize your Airbnb performance and understand market dynamics?** 🚀
 
 [Get Started](#demo--getting-started) | [View Demo](#live-demo) | [Learn More](#the-solution) 
