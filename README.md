@@ -28,8 +28,9 @@ Hosts need a simple, visual way to understand their booking data, compare with m
 - **📊 Performance Metrics**: Key metrics and insights to improve your hosting business
 
 #### **🏙️ Copenhagen Market Intelligence**
+- **📊 Copenhagen Market Occupancy**: Comprehensive market-wide occupancy analysis with availability patterns
 - **🏙️ Market Insights**: Comprehensive Copenhagen market statistics and competitive analysis
-- **📝 Review Patterns**: Analyze when guests typically leave reviews (day-of-week patterns)
+- **📝 Enhanced Review Analysis**: Advanced review patterns with listing-level metrics and market insights
 - **📅 Calendar Analysis**: Interactive calendar views for individual listings and market-wide availability
 - **🏘️ Neighbourhood Analysis**: Compare performance across different Copenhagen neighbourhoods
 - **🏠 Room Type Analysis**: Understand pricing and demand by room type
@@ -40,10 +41,12 @@ Hosts need a simple, visual way to understand their booking data, compare with m
 - **📁 Simple Upload**: Just upload your Airbnb CSV export and get instant insights
 - **🔍 Automatic Detection**: Automatically detects date and price columns from your data
 - **📊 Visual Analytics**: Beautiful interactive charts and graphs to understand performance
-- **📈 Review Analysis**: Understand guest review patterns and timing
+- **📈 Enhanced Review Analysis**: Advanced guest review patterns with listing-level metrics
 - **📅 Interactive Calendars**: Visualize availability and booking patterns
 - **🏙️ Market Comparison**: Compare your performance with Copenhagen market data
 - **🎯 Data-Driven Decisions**: Make informed decisions based on your actual booking data
+- **📊 Market Occupancy Analysis**: Understand city-wide booking patterns and availability trends
+- **🏠 Availability Insights**: Analyze 365-day availability patterns by room type and neighbourhood
 
 ## 🎮 Demo & Getting Started
 
@@ -89,8 +92,9 @@ streamlit run airbnb_host_advisor.py
 - **💵 Your Pricing Analysis**: Pricing patterns and optimization insights
 
 #### **Copenhagen Market Intelligence**
+- **📊 Copenhagen Market Occupancy**: Market-wide occupancy analysis with availability insights
 - **🏙️ Copenhagen Market Insights**: Market statistics, neighbourhood analysis, and room type insights
-- **📝 Copenhagen Review Patterns**: Day-of-week review patterns with interactive charts
+- **📝 Enhanced Review Analysis**: Advanced review patterns with listing-level metrics and market insights
 - **📅 Copenhagen Calendar Analysis**: Interactive calendar views for individual listings and market-wide availability
 
 ## 🛠️ Technical Stack
@@ -134,18 +138,21 @@ AirBnbAnalyzer/
 - Track revenue and occupancy patterns over time
 - Compare your performance with Copenhagen market data
 - Understand guest review patterns and timing
+- Analyze market-wide occupancy patterns and availability trends
 
 ### For Property Managers
 - Monitor multiple properties' performance
 - Identify revenue optimization opportunities
 - Track pricing effectiveness across different properties
 - Market analysis for competitive positioning
+- Understand city-wide availability patterns and market dynamics
 
 ### For New Hosts
 - Understand your initial performance data
 - Identify patterns in your early bookings
 - Optimize pricing based on your actual data
 - Learn from Copenhagen market insights
+- Understand market occupancy patterns and availability trends
 
 ## 🚀 Roadmap
 

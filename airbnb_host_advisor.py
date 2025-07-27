@@ -10,7 +10,7 @@ from streamlit_calendar import calendar
 
 # Import our modules
 from utils.data_loader import load_booking_data, load_city_data
-from analytics.analysis import analyze_occupancy, analyze_revenue, analyze_pricing, analyze_city_market, analyze_review_patterns
+from analytics.analysis import analyze_occupancy, analyze_revenue, analyze_pricing, analyze_city_market, analyze_review_patterns, analyze_copenhagen_occupancy, analyze_enhanced_review_patterns
 from components.ui import get_custom_css, render_success_message, render_error_message, render_upload_instructions, render_dashboard_features
 
 # Page configuration
@@ -311,16 +311,16 @@ def render_city_market_page(listings_df, calendar_df, city_data_loaded):
             st.markdown("#### 📋 Room Type Statistics")
             st.dataframe(city_stats['room_type_stats'].round(2), use_container_width=True)
 
-def render_review_analysis_page(reviews_df, city_data_loaded):
-    """Render review analysis page"""
+def render_review_analysis_page(reviews_df, listings_df, city_data_loaded):
+    """Render enhanced review analysis page"""
     if not city_data_loaded:
         st.error("❌ Copenhagen market data not available. Please ensure the data files are in the project directory.")
         return
     
-    st.markdown("### 📝 Review Analysis")
-    st.markdown("Analyzing review patterns to understand when guests typically leave reviews.")
+    st.markdown("### 📝 Enhanced Review Analysis")
+    st.markdown("Analyzing review patterns and listing review metrics to understand guest feedback trends.")
     
-    review_data = analyze_review_patterns(reviews_df)
+    review_data = analyze_enhanced_review_patterns(reviews_df, listings_df)
     
     if review_data:
         # Review statistics
@@ -401,6 +401,470 @@ def render_review_analysis_page(reviews_df, city_data_loaded):
                 <p>{insight}</p>
             </div>
             """, unsafe_allow_html=True)
+        
+        # Enhanced Review Analysis - New Features from Listings Data
+        if 'review_stats' in review_data and review_data['review_stats']:
+            st.markdown("### 📊 Enhanced Review Metrics Analysis")
+            st.markdown("Analysis of review-related features from listings data to understand review patterns and distribution.")
+            
+            # Review statistics overview
+            st.markdown("#### 📈 Review Statistics Overview")
+            
+            review_stats = review_data['review_stats']
+            available_features = list(review_stats.keys())
+            
+            if available_features:
+                # Create metrics for each feature
+                num_features = len(available_features)
+                cols = st.columns(min(num_features, 4))
+                
+                for i, feature in enumerate(available_features):
+                    with cols[i % 4]:
+                        stats = review_stats[feature]
+                        st.markdown(f'<div class="metric-card">', unsafe_allow_html=True)
+                        st.metric(
+                            f"{feature.replace('_', ' ').title()}",
+                            f"{stats['mean']:.1f}",
+                            help=f"Mean: {stats['mean']:.1f}, Median: {stats['median']:.1f}, Std: {stats['std']:.1f}"
+                        )
+                        st.markdown('</div>', unsafe_allow_html=True)
+                
+                # Zero reviews analysis
+                st.markdown("#### 🔍 Zero Reviews Analysis")
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    if 'number_of_reviews' in review_stats:
+                        stats = review_stats['number_of_reviews']
+                        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+                        st.metric("Listings with 0 Reviews", f"{stats['zero_reviews']:,}")
+                        st.markdown('</div>', unsafe_allow_html=True)
+                
+                with col2:
+                    if 'number_of_reviews' in review_stats:
+                        stats = review_stats['number_of_reviews']
+                        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+                        st.metric("0 Reviews %", f"{stats['zero_reviews_pct']:.1f}%")
+                        st.markdown('</div>', unsafe_allow_html=True)
+                
+                with col3:
+                    if 'number_of_reviews' in review_stats:
+                        stats = review_stats['number_of_reviews']
+                        active_listings = stats['total_listings'] - stats['zero_reviews']
+                        st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+                        st.metric("Active Listings", f"{active_listings:,}")
+                        st.markdown('</div>', unsafe_allow_html=True)
+                
+                # Distribution plots for review features
+                if 'review_distributions' in review_data and review_data['review_distributions']:
+                    st.markdown("#### 📊 Review Distributions")
+                    
+                    distributions = review_data['review_distributions']
+                    
+                    # Create distribution charts
+                    for feature, distribution in distributions.items():
+                        if not distribution.empty:
+                            fig = px.bar(
+                                x=distribution.index,
+                                y=distribution.values,
+                                title=f"{feature.replace('_', ' ').title()} Distribution",
+                                labels={'x': 'Range', 'y': 'Number of Listings'},
+                                color=distribution.values,
+                                color_continuous_scale='viridis'
+                            )
+                            st.plotly_chart(fig, use_container_width=True)
+                
+
+                
+                # Room type analysis
+                if 'room_type_reviews' in review_data and review_data['room_type_reviews']:
+                    st.markdown("#### 🏠 Review Metrics by Room Type")
+                    
+                    room_type_data = review_data['room_type_reviews']
+                    
+                    for feature, room_stats in room_type_data.items():
+                        if not room_stats.empty:
+                            # Create bar chart for mean values
+                            fig = px.bar(
+                                x=room_stats.index,
+                                y=room_stats['mean'],
+                                title=f"Average {feature.replace('_', ' ').title()} by Room Type",
+                                labels={'x': 'Room Type', 'y': f'Average {feature.replace("_", " ").title()}'},
+                                color=room_stats['mean'],
+                                color_continuous_scale='viridis'
+                            )
+                            st.plotly_chart(fig, use_container_width=True)
+                            
+                            # Display detailed table
+                            st.markdown(f"**Detailed Statistics for {feature.replace('_', ' ').title()}:**")
+                            st.dataframe(room_stats.round(2), use_container_width=True)
+                
+                # Neighbourhood analysis
+                if 'neighbourhood_reviews' in review_data and review_data['neighbourhood_reviews']:
+                    st.markdown("#### 🏘️ Review Metrics by Neighbourhood")
+                    
+                    neighbourhood_data = review_data['neighbourhood_reviews']
+                    
+                    for feature, neighbourhood_stats in neighbourhood_data.items():
+                        if not neighbourhood_stats.empty:
+                            # Create bar chart for mean values (top 10)
+                            top_neighbourhoods = neighbourhood_stats.sort_values('mean', ascending=False).head(10)
+                            
+                            fig = px.bar(
+                                x=top_neighbourhoods.index,
+                                y=top_neighbourhoods['mean'],
+                                title=f"Top 10 Neighbourhoods by Average {feature.replace('_', ' ').title()}",
+                                labels={'x': 'Neighbourhood', 'y': f'Average {feature.replace("_", " ").title()}'},
+                                color=top_neighbourhoods['mean'],
+                                color_continuous_scale='viridis'
+                            )
+                            st.plotly_chart(fig, use_container_width=True)
+                            
+                            # Display detailed table
+                            st.markdown(f"**Detailed Statistics for {feature.replace('_', ' ').title()}:**")
+                            st.dataframe(neighbourhood_stats.round(2), use_container_width=True)
+                
+                # Key insights for enhanced review analysis
+                st.markdown("#### 💡 Enhanced Review Insights")
+                
+                enhanced_insights = []
+                
+                # Zero reviews insight
+                if 'number_of_reviews' in review_stats:
+                    stats = review_stats['number_of_reviews']
+                    enhanced_insights.append(f"📊 **{stats['zero_reviews_pct']:.1f}% of listings have no reviews** ({stats['zero_reviews']:,} out of {stats['total_listings']:,} listings)")
+                
+                # Reviews per month insight
+                if 'reviews_per_month' in review_stats:
+                    stats = review_stats['reviews_per_month']
+                    enhanced_insights.append(f"📅 **Average reviews per month:** {stats['mean']:.1f} (median: {stats['median']:.1f})")
+                
+                # Last 12 months reviews insight
+                if 'number_of_reviews_ltm' in review_stats:
+                    stats = review_stats['number_of_reviews_ltm']
+                    enhanced_insights.append(f"📈 **Last 12 months:** Average {stats['mean']:.1f} reviews per listing (median: {stats['median']:.1f})")
+                
+                # Room type insights
+                if 'room_type_reviews' in review_data and 'number_of_reviews' in review_data['room_type_reviews']:
+                    room_stats = review_data['room_type_reviews']['number_of_reviews']
+                    if not room_stats.empty:
+                        best_room_type = room_stats['mean'].idxmax()
+                        best_avg = room_stats['mean'].max()
+                        enhanced_insights.append(f"🏠 **{best_room_type}** has the highest average reviews ({best_avg:.1f})")
+                
+                # Neighbourhood insights
+                if 'neighbourhood_reviews' in review_data and 'number_of_reviews' in review_data['neighbourhood_reviews']:
+                    neighbourhood_stats = review_data['neighbourhood_reviews']['number_of_reviews']
+                    if not neighbourhood_stats.empty:
+                        best_neighbourhood = neighbourhood_stats['mean'].idxmax()
+                        best_avg = neighbourhood_stats['mean'].max()
+                        enhanced_insights.append(f"🏘️ **{best_neighbourhood}** has the highest average reviews ({best_avg:.1f})")
+                
+                # Display enhanced insights
+                for insight in enhanced_insights:
+                    st.markdown(f"""
+                    <div class="insight-box">
+                        <p>{insight}</p>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+def render_copenhagen_occupancy_page(calendar_df, listings_df, city_data_loaded):
+    """Render Copenhagen occupancy analysis page"""
+    if not city_data_loaded:
+        st.error("❌ Copenhagen market data not available. Please ensure the data files are in the project directory.")
+        return
+    
+    st.markdown("### 📊 Copenhagen Market Occupancy Analysis")
+    st.markdown("Analyze which days have more bookings and which have fewer in the Copenhagen market.")
+    
+    # Load full calendar data for comprehensive analysis
+    with st.spinner("Loading Copenhagen occupancy data..."):
+        from utils.data_loader import load_full_calendar_data
+        full_calendar_df = load_full_calendar_data()
+        
+        if full_calendar_df is not None:
+            calendar_df = full_calendar_df
+    
+    if calendar_df is None or calendar_df.empty:
+        st.error("❌ No calendar data available for occupancy analysis.")
+        return
+    
+    # Analyze Copenhagen occupancy with listings data for availability_365 analysis
+    occupancy_data = analyze_copenhagen_occupancy(calendar_df, listings_df)
+    
+    if occupancy_data:
+        # Overview metrics
+        st.markdown("### 📈 Market Overview")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("Total Days Analyzed", f"{occupancy_data['total_days']:,}")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("Booked Days", f"{occupancy_data['booked_days']:,}")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with col3:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("Available Days", f"{occupancy_data['available_days']:,}")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with col4:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("Occupancy Rate", f"{occupancy_data['occupancy_rate']:.1f}%")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        # Peak and low occupancy insights
+        st.markdown("### 🎯 Peak & Low Occupancy Days")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown('<div class="insight-box">', unsafe_allow_html=True)
+            st.markdown(f"""
+            <h4>📈 Peak Occupancy Day</h4>
+            <p><strong>{occupancy_data['peak_day']}</strong> with {occupancy_data['peak_bookings']:,} bookings</p>
+            """, unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown('<div class="insight-box">', unsafe_allow_html=True)
+            st.markdown(f"""
+            <h4>📉 Lowest Occupancy Day</h4>
+            <p><strong>{occupancy_data['low_day']}</strong> with {occupancy_data['low_bookings']:,} bookings</p>
+            """, unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        # Weekend vs Weekday analysis
+        st.markdown("### 📅 Weekend vs Weekday Analysis")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("Weekend Bookings", f"{occupancy_data['weekend_bookings']:,}")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("Weekday Bookings", f"{occupancy_data['weekday_bookings']:,}")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        # Weekend vs Weekday percentage
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("Weekend %", f"{occupancy_data['weekend_pct']:.1f}%")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        with col2:
+            st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+            st.metric("Weekday %", f"{occupancy_data['weekday_pct']:.1f}%")
+            st.markdown('</div>', unsafe_allow_html=True)
+        
+        # Day of week occupancy chart
+        st.markdown("### 📊 Occupancy by Day of Week")
+        
+        if not occupancy_data['dow_occupancy'].empty:
+            fig = px.bar(
+                x=occupancy_data['dow_occupancy'].index,
+                y=occupancy_data['dow_occupancy'].values,
+                title="Copenhagen Market: Bookings by Day of Week",
+                labels={'x': 'Day of Week', 'y': 'Number of Bookings'},
+                color=occupancy_data['dow_occupancy'].values,
+                color_continuous_scale='viridis'
+            )
+            
+            # Update layout for better presentation
+            fig.update_layout(
+                xaxis={'categoryorder': 'array', 'categoryarray': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']},
+                showlegend=False
+            )
+            
+            st.plotly_chart(fig, use_container_width=True)
+        
+        # Monthly occupancy trends
+        st.markdown("### 📈 Monthly Occupancy Trends")
+        
+        if not occupancy_data['monthly_occupancy'].empty:
+            fig = px.line(
+                occupancy_data['monthly_occupancy'],
+                x='date',
+                y='booked_days',
+                title="Copenhagen Market: Monthly Booking Trends"
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        
+        # Day of month occupancy (shows patterns within months)
+        st.markdown("### 📅 Occupancy by Day of Month")
+        
+        if not occupancy_data['day_of_month_occupancy'].empty:
+            fig = px.bar(
+                x=occupancy_data['day_of_month_occupancy'].index,
+                y=occupancy_data['day_of_month_occupancy'].values,
+                title="Copenhagen Market: Bookings by Day of Month",
+                labels={'x': 'Day of Month', 'y': 'Number of Bookings'}
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        
+        # Quarterly analysis
+        st.markdown("### 🍂 Seasonal Occupancy Analysis")
+        
+        if not occupancy_data['quarterly_occupancy'].empty:
+            fig = px.bar(
+                occupancy_data['quarterly_occupancy'],
+                x='quarter',
+                y='booked_days',
+                title="Copenhagen Market: Quarterly Booking Trends",
+                labels={'x': 'Quarter', 'y': 'Number of Bookings'}
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        
+        # Key insights
+        st.markdown("### 💡 Key Insights")
+        
+        insights = []
+        
+        # Peak day insight
+        if occupancy_data['peak_day']:
+            peak_pct = (occupancy_data['peak_bookings'] / occupancy_data['booked_days'] * 100).round(1)
+            insights.append(f"📈 **{occupancy_data['peak_day']}** is the busiest day with {occupancy_data['peak_bookings']:,} bookings ({peak_pct}% of total)")
+        
+        # Low day insight
+        if occupancy_data['low_day']:
+            low_pct = (occupancy_data['low_bookings'] / occupancy_data['booked_days'] * 100).round(1)
+            insights.append(f"📉 **{occupancy_data['low_day']}** is the quietest day with {occupancy_data['low_bookings']:,} bookings ({low_pct}% of total)")
+        
+        # Weekend vs weekday insight
+        if occupancy_data['weekend_pct'] > occupancy_data['weekday_pct']:
+            insights.append(f"🎉 **Weekends are busier** with {occupancy_data['weekend_pct']:.1f}% of bookings vs {occupancy_data['weekday_pct']:.1f}% on weekdays")
+        else:
+            insights.append(f"💼 **Weekdays are busier** with {occupancy_data['weekday_pct']:.1f}% of bookings vs {occupancy_data['weekend_pct']:.1f}% on weekends")
+        
+        # Overall occupancy insight
+        if occupancy_data['occupancy_rate'] > 50:
+            insights.append(f"🔥 **High occupancy market** with {occupancy_data['occupancy_rate']:.1f}% overall occupancy rate")
+        else:
+            insights.append(f"📊 **Moderate occupancy market** with {occupancy_data['occupancy_rate']:.1f}% overall occupancy rate")
+        
+        # Display insights
+        for insight in insights:
+            st.markdown(f"""
+            <div class="insight-box">
+                <p>{insight}</p>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Enhanced analysis with availability_365
+        if occupancy_data.get('availability_analysis'):
+            st.markdown("### 🏠 Availability 365 Analysis")
+            st.markdown("Analysis of listing availability patterns for the next 365 days.")
+            
+            availability_data = occupancy_data['availability_analysis']
+            
+            # Overview metrics
+            st.markdown("#### 📊 Availability Overview")
+            
+            col1, col2, col3, col4 = st.columns(4)
+            
+            with col1:
+                st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+                st.metric("Total Listings", f"{availability_data['total_listings']:,}")
+                st.markdown('</div>', unsafe_allow_html=True)
+            
+            with col2:
+                st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+                st.metric("High Availability", f"{availability_data['high_availability_count']:,}")
+                st.markdown('</div>', unsafe_allow_html=True)
+            
+            with col3:
+                st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+                st.metric("Low Availability", f"{availability_data['low_availability_count']:,}")
+                st.markdown('</div>', unsafe_allow_html=True)
+            
+            with col4:
+                avg_availability = availability_data['stats']['mean']
+                st.markdown('<div class="metric-card">', unsafe_allow_html=True)
+                st.metric("Avg Availability", f"{avg_availability:.0f} days")
+                st.markdown('</div>', unsafe_allow_html=True)
+            
+            # Availability distribution
+            st.markdown("#### 📈 Availability Distribution")
+            
+            if not availability_data['distribution'].empty:
+                fig = px.pie(
+                    values=availability_data['distribution'].values,
+                    names=availability_data['distribution'].index,
+                    title="Distribution of Listings by Availability Level"
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            
+            # Availability by room type
+            if availability_data['by_room_type'] is not None:
+                st.markdown("#### 🏘️ Availability by Room Type")
+                
+                room_availability = availability_data['by_room_type'].reset_index()
+                fig = px.bar(
+                    room_availability,
+                    x='room_type',
+                    y='mean',
+                    title="Average Availability by Room Type",
+                    labels={'mean': 'Average Days Available', 'room_type': 'Room Type'}
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            
+            # Top neighbourhoods by availability
+            if availability_data['top_neighbourhoods'] is not None:
+                st.markdown("#### 🏙️ Top Neighbourhoods by Availability")
+                
+                top_neighbourhoods = availability_data['top_neighbourhoods'].reset_index()
+                fig = px.bar(
+                    top_neighbourhoods,
+                    x='neighbourhood',
+                    y='mean',
+                    title="Top 10 Neighbourhoods by Average Availability",
+                    labels={'mean': 'Average Days Available', 'neighbourhood': 'Neighbourhood'}
+                )
+                fig.update_xaxes(tickangle=45)
+                st.plotly_chart(fig, use_container_width=True)
+            
+            # Key availability insights
+            st.markdown("#### 💡 Availability Insights")
+            
+            availability_insights = []
+            
+            # High availability insight
+            if availability_data['high_availability_pct'] > 20:
+                availability_insights.append(f"📈 **High availability market**: {availability_data['high_availability_pct']:.1f}% of listings are available for 300+ days")
+            else:
+                availability_insights.append(f"📊 **Moderate availability market**: {availability_data['high_availability_pct']:.1f}% of listings are available for 300+ days")
+            
+            # Low availability insight
+            if availability_data['low_availability_pct'] > 30:
+                availability_insights.append(f"🔥 **High demand market**: {availability_data['low_availability_pct']:.1f}% of listings are available for less than 30 days")
+            else:
+                availability_insights.append(f"📉 **Moderate demand market**: {availability_data['low_availability_pct']:.1f}% of listings are available for less than 30 days")
+            
+            # Average availability insight
+            if avg_availability > 200:
+                availability_insights.append(f"🏠 **High availability**: Average listing is available for {avg_availability:.0f} days")
+            elif avg_availability > 100:
+                availability_insights.append(f"🏠 **Moderate availability**: Average listing is available for {avg_availability:.0f} days")
+            else:
+                availability_insights.append(f"🏠 **Low availability**: Average listing is available for {avg_availability:.0f} days")
+            
+            # Display availability insights
+            for insight in availability_insights:
+                st.markdown(f"""
+                <div class="insight-box">
+                    <p>{insight}</p>
+                </div>
+                """, unsafe_allow_html=True)
 
 def render_calendar_analysis_page(calendar_df, listings_df, city_data_loaded):
     """Render calendar analysis page"""
@@ -656,6 +1120,7 @@ def main():
             "💰 Your Revenue Analysis",
             "💵 Your Pricing Analysis",
             "🏙️ Copenhagen Market Insights",
+            "📊 Copenhagen Market Occupancy",
             "📝 Copenhagen Review Patterns",
             "📅 Copenhagen Calendar Analysis"
         ],
@@ -692,7 +1157,7 @@ def main():
     calendar_df = None
     reviews_df = None
     
-    if page in ["🏙️ Copenhagen Market Insights", "📝 Copenhagen Review Patterns", "📅 Copenhagen Calendar Analysis"]:
+    if page in ["🏙️ Copenhagen Market Insights", "📊 Copenhagen Market Occupancy", "📝 Copenhagen Review Patterns", "📅 Copenhagen Calendar Analysis"]:
         with st.spinner("Loading Copenhagen market data..."):
             listings_df, calendar_df, reviews_df = load_city_data()
             city_data_loaded = listings_df is not None
@@ -713,8 +1178,11 @@ def main():
     elif page == "🏙️ Copenhagen Market Insights":
         render_city_market_page(listings_df, calendar_df, city_data_loaded)
     
+    elif page == "📊 Copenhagen Market Occupancy":
+        render_copenhagen_occupancy_page(calendar_df, listings_df, city_data_loaded)
+    
     elif page == "📝 Copenhagen Review Patterns":
-        render_review_analysis_page(reviews_df, city_data_loaded)
+        render_review_analysis_page(reviews_df, listings_df, city_data_loaded)
     
     elif page == "📅 Copenhagen Calendar Analysis":
         render_calendar_analysis_page(calendar_df, listings_df, city_data_loaded)
